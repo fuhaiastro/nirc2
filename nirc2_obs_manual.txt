@@ -1,0 +1,123 @@
+Notes on NIRC2 Observer'sManual - Hai Fu - April 2011
+
+*************************
+* IMAGING ***************
+*************************
+[Instrument Commands]
+* coadd [n]
+* sampmode [type [n]]
+* tint [t]: 90s to reach 8000 DN in background Kp, t=0 to set to minimum exptime
+* goi [n]
+* frame [n]: sets frame number for the next file to n
+* filt [Ks/Kp]
+* shutter open/closed
+
+[AO interaction]
+* aohatch open/closed
+* wait4ao
+
+[Telescope Commands]
+* pxy x y: Move telescope (x,y) pixels in detector coordinates
+* xy x y:  Move telescope (x,y) arcsec in detector coordinates
+* mov x1 y1 x2 y2: Move an object from (x1,y1) to (x2,y2) on the detector.
+* rotate x [posang/vertang]: Set PA
+
+[Dithering Patterns]
+* bxy3 x [y]: Leg size is x arcsec by y arcsec
+* bxy5/8/9
+* /home/nirc2eng/vis/fu/lgans9 x [y] [n=Nim] [laser=0/1]
+ laser = 1: During dither, laser moves with object
+
+[User Scripts]
+> cd ~nirc2eng/vis/fu
+> user fu: add to top of the path
+
+[End]
+* endnight
+
+[Calibrations]
+* Darks: take with shutter closed for all tint+coadds+Nread combinations
+* Dome flats:
+1. Ask OA to point to a good fat field spot on the dome
+2. waikoko > configAOforFlats
+3. Interface subcomponents/dome lamp control GUI
+4. Turn on SPEC lamps
+5. goi or /home/nirc2eng/vis/arc/flat_examples/makeFlats
+      Wide Narrow (tint to reach 8000 DN)
+	Ks 4.5s    70s
+   Kp   3s    45s
+	K    6s   150s
+6. Take flats with lamp off
+7. if in the morning, run endnight then aohatch close
+
+[Optimize Efficiency]
+* For faint sources, expose till background reach 8000 DN, Nread=8 or 16
+  should be fine.
+* To avoid persistence, keep count below 8000 DN.
+* For faint sources w/ bright objects on the chip, expose to the
+  minimum exposure time to reach background limited case, then coadd
+ 	 RON = 60e-/sqrt(Nreads)
+  For Kp, Wide Camera
+ 	 Sky Noise = sqrt(358e-/s * itime) = 19e-*sqrt(itime)
+  To reach background limited case, i.e., sky noise > n*RON
+ 	 itime*Nread > 10*n^2 ~= 40 for n=2
+* Minimum itime for 1024^2 frames, set by NIRC2:
+  Nreads:    2    8    16   32   64
+  itime:  0.18 1.45  2.90 5.80 11.6 seconds
+  itime*N:0.36 11.6  46.4  186  742
+* For bright sources, use the table below:
+  Tsrc = itime*coadds = 60s, DN < 8,000, maximize nSNR = SNR/sqrt(Ttot)
+  (see nirc2_optimize.pro)
+---- ----- ------ ----- --------- -------- ------
+ Kp itime coadds Nread Tsrc/Ttot nSNR_max     DN
+---- ----- ------ ----- --------- -------- ------
+13.0   1.9     31     2     0.718    102.7   7856
+13.5   3.0     20     2     0.735     82.0   7782
+14.0   4.6     13     2     0.747     65.0   7707
+14.5   6.7      9     2     0.754     51.0   7244
+15.0  10.0      6     2     0.759     39.7   7187
+15.5  15.0      4     2     0.762     30.5   7298
+16.0  20.0      3     8     0.734     23.1   6801
+16.5  30.0      2     8     0.745     17.2   7428
+17.0  30.0      2     8     0.745     12.4   5679
+17.5  30.0      2     8     0.745      8.7   4575
+18.0  60.0      1     8     0.757      6.0   7757
+22.0  60.0      1     8     0.757      0.2   5435
+---- ----- ------ ----- --------- -------- ------
+To compute the S/N I used:
+* Total elapsed observing time (sec) =
+  6 *(ndither+1) + 12*ndither*nframes + ndither*nframes*coadds*(itime+0.18*(nread-1))
+  ~ ndither * (6 + 12*nframes + nframes*coadds*[itime+0.18*(nread-1)])
+  = ndither * (18 + coadds*[itime+0.18*(nread-1)]) IF 1 frame per dithering position.
+* The detector is linear to about 10,000 DN.
+* Gain = 4 e-/DN
+* Dark < 0.1 e-/s
+* Read noise = 60 e- / sqrt(Nread)
+* Point Source Peak Pixel Signal = 1300 DN/s [Kp band]
+ for Ks[2MASS] = 14.2 at Strehl ~ 0.2 and Wide Camera
+* Kp-band background = 89.6 DN/s [SNR calculator, Wide Camera]
+
+*************************
+* SPECTROSCOPY **********
+*************************
+
+[Checklist]
+http://www2.keck.hawaii.edu/inst/nirc2/checklists/spec_check_list.html
+
+[Commands]
+> slitcol - Compute slit position on detector and focal plane
+  inputs: grism, camera, central wavelength, and order
+  output: SLITMM, SLITCOL
+* to change SLITCOL, run slitcol with different central wavelengths  
+> grism medres - change grism
+> slitmm - change slitmm value
+> slit - insert slit 10/20/30/40/60/120/160 mas
+> mov x1 y1 x2 y2
+> sltmov 0 0.08 - move object to the left, perpendicular to the slit (less efficient)
+> movslit 4 - move slit 4 columns to the right. (more efficient) 
+> sp2 dy (in arcsec)
+
+Wavelength calibration - Sky OH lines
+Spectral standards - telluric and flux calibration
+Flat fielding - a brighter lamp for spectroscopy flats
+

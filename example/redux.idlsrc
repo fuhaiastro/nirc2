@@ -1,0 +1,49 @@
+;-----------------------------------;
+; BEFORE START, UNZIP ALL FITS FILES
+;-----------------------------------;
+
+; raw data folder
+dirs = 'cosmos01_ks' 
+ct   = n_elements(dirs)
+
+; calibration files
+fltfile='flat_Ks_W_11apr'
+bpmfile='badpix_12oct'
+drkfile='drk_80_1_16_11apr'
+
+; do each of the three steps separatly
+goto,initial
+goto,fullreduction
+goto,astrometry
+ 
+initial:
+; /initial mode - just click & save (x,y) poisitions of reference sources
+for ii=0,ct-1 do begin
+	spawn,'gethead '+dirs[ii]+'/n*.fits object itime coadds multisam sampmode filter'
+	print,fltfile,' ',drkfile
+	B = ''	; Define B as a string before reading.
+	READ, B, PROMPT='Proceed? (y/n): '	; Read input from the terminal.
+	if B eq 'n' then goto,theend
+
+	nirc2redux,dirs[ii]+'/n*.fits',caldir='cal/',$
+		fltfile=fltfile,bpmfile=bpmfile,drkfile=drkfile,$
+		/initial,/exam,recenter=recenter,reset=0,ngs=0
+endfor
+goto,theend
+
+fullreduction:
+; full reduction
+for ii=0,ct-1 do begin
+	nirc2redux,dirs[ii]+'/n*.fits',caldir='cal/',$
+		fltfile=fltfile,bpmfile=bpmfile,drkfile=drkfile,$
+		recenter=recenter,/undistort
+endfor
+goto,theend
+
+astrometry:
+; astrometry calibration
+for ii=0,ct-1 do nirc2ast,dirs[ii]
+
+theend:
+end
+

@@ -1,0 +1,24 @@
+# File, Lorentian HWHM [pix]: median = 0.0 stddev = 0.0, combined?
+cosmos01_ks/n0031.fits      0.0000000      1
+cosmos01_ks/n0032.fits      0.0000000      1
+cosmos01_ks/n0033.fits      0.0000000      1
+cosmos01_ks/n0034.fits      0.0000000      1
+cosmos01_ks/n0035.fits      0.0000000      1
+cosmos01_ks/n0036.fits      0.0000000      1
+cosmos01_ks/n0037.fits      0.0000000      1
+cosmos01_ks/n0038.fits      0.0000000      1
+cosmos01_ks/n0039.fits      0.0000000      1
+cosmos01_ks/n0040.fits      0.0000000      1
+cosmos01_ks/n0041.fits      0.0000000      1
+cosmos01_ks/n0042.fits      0.0000000      1
+cosmos01_ks/n0043.fits      0.0000000      1
+cosmos01_ks/n0044.fits      0.0000000      1
+cosmos01_ks/n0045.fits      0.0000000      1
+cosmos01_ks/n0046.fits      0.0000000      1
+cosmos01_ks/n0047.fits      0.0000000      1
+cosmos01_ks/n0048.fits      0.0000000      1
+cosmos01_ks/n0049.fits      0.0000000      1
+cosmos01_ks/n0050.fits      0.0000000      1
+cosmos01_ks/n0051.fits      0.0000000      1
+cosmos01_ks/n0052.fits      0.0000000      1
+cosmos01_ks/n0053.fits      0.0000000      1
