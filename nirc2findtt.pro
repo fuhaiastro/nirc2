@@ -144,7 +144,7 @@ for i=0,n_elements(in)-1 do begin
 			' Sep='+strtrim(string(usno_sep[idx],f='(f5.1)'),2)+$
 			' B-V='+strtrim(string(b_v[idx],f='(f5.2)'),2)+$
 			' S='+strtrim(string(strehl[idx],f='(f5.2)'),2)
-	endif
+	endif else print,'No valid TT ref found around '+in[i].targ
 	if i mod 5 eq 0 then print,i+1,' / ',n_elements(in) ; show status
 endfor
 ; fill in additional tags so that we can use starstring.pro
@@ -177,7 +177,8 @@ ttr.comment += ' R='+strtrim(string(ttr.rmag,f='(f6.1)'),2)+$
 
 ; Save IDL structure
 mwrfits,ttr,prefix+'.fits',/create
-; Save starlist
+
+; Save starlist for those w/ valid TTref only
 s = where(ttr.ttrmag ne 0)
 str1 = starstring(ttr[s],str2)
 str3 = ''

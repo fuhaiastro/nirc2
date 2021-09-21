@@ -1,0 +1,7 @@
+; make Keck starlist and NIRC2 finder chart
+nirc2findtt,'cosmos01',150.43402,2.95156,prefix='cosmos01'
+nirc2fchart,'cosmos01.lst',/over
+
+
+end
+
