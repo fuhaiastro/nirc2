@@ -1,6 +1,4 @@
-;-----------------------------------;
-; BEFORE START, UNZIP ALL FITS FILES
-;-----------------------------------;
+; BEFORE START, UNZIP ALL FITS.GZ FILES
 
 ; raw data folder
 dirs = 'cosmos01_ks' 
@@ -11,10 +9,16 @@ fltfile='flat_Ks_W_11apr'
 bpmfile='badpix_12oct'
 drkfile='drk_80_1_16_11apr'
 
-; do each of the three steps separatly
-goto,initial
-goto,fullreduction
-goto,astrometry
+; To test if the package is installed properly, do the full reduction
+; with the example files. MAKE SURE ALL OF THE FITS.GZ FILES IN THE CAL
+; AND THE DATA FOLDER HAVE BEEN UNZIPPED BEFORE PROCEEDING.
+
+; When reducing a new data set, one shall run each of the three steps
+; separately in this order.
+
+;goto,initial ; User selects the reference source
+goto,fullreduction ; Full reduction with approximate WCS inserted
+;goto,astrometry ; Astrometry calibration with SDSS catalogs
  
 initial:
 ; /initial mode - just click & save (x,y) poisitions of reference sources

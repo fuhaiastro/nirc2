@@ -7,9 +7,77 @@
 
 ## Demo Example
 
-An example with raw data, the reduced image, and the reduction script are provided for in the [example folder](https://github.com/fuhaiastro/nirc2/tree/main/example).
+An example with raw data, the reduced image, and the reduction script
+are provided for in the [example
+folder](https://github.com/fuhaiastro/nirc2/tree/main/example). Once you
+have followed the steps below to install the code, you can do the
+following commands to test your installation:
+```shell
+cd ~/idl/nirc2/example/
+gunzip cal/*.gz
+gunzip cosmos01_ks/*.gz
+nirc2
+NIRC2> .r redux.idlsrc
+```
+The script takes about 5 min to complete the full reduction of the data
+set and generates a new output FITS file. 
 
-## Observation Preparation
+## Installation Guide
+
+1. Download source code
+```shell
+cd ~/idl
+git clone https://github.com/fuhaiastro/nirc2.git
+```
+2. Set environmental variables and define start-up command to launch `spfit`.
+```shell
+vi ~/.bash_profile
+alias nirc2='source ~/idl/nirc2/setup.sh; /Applications/harris/idl/bin/idl -IDL_PROMPT "SPFIT>"'
+```
+3. Make sure the appropriate paths are set correctly for your host.
+```shell
+vi ~/idl/nirc2/setup.sh
+```
+Below is the content of the setup file:
+```shell
+# Bash shell commands to define IDL environment variables and aliases.
+. /Applications/harris/idl/bin/idl_setup.bash
+
+# start up IDL path
+export IDL_PATH=+$IDL_DIR/examples:+$IDL_DIR/lib
+
+# local user's IDL folder
+export IDL=$HOME/idl
+
+# NIRC2_IDL - NIRC2 data reduction & analysis
+export NIRC2_DIR=$IDL/pipelines/nirc2
+export IDL_PATH=${IDL_PATH}:+$NIRC2_DIR/pro
+
+# If preferred, use latest Astro, Coyote, MPFIT packages
+#export IDL_PATH=${IDL_PATH}:+$IDL/astron/pro:+$IDL/coyote:+$IDL/mpfit
+
+# IDLUTILS (which includes Astrolib, Coyote, & MPFIT)
+export IDLUTILS_DIR=$IDL/idlutils
+export IDL_PATH=${IDL_PATH}:+$IDLUTILS_DIR/goddard/pro:+$IDLUTILS_DIR/pro
+export PATH=$IDLUTILS_DIR/bin:$PATH
+
+# Other useful IDL programs
+export IDL_PATH=${IDL_PATH}:+$NIRC2_DIR/utilities
+```
+4. Install IDLUTILS
+```shell
+cd ~/idl
+mkdir idlutils
+cd idlutils
+svn co https://svn.sdss.org/public/repo/sdss/idlutils/trunk .
+export IDL_DIR=/Applications/harris/idl
+export IDL=$HOME/idl
+export IDLUTILS_DIR=$IDL/idlutils
+$IDLUTILS_DIR/bin/evilmake clean
+$IDLUTILS_DIR/bin/evilmake
+```
+
+## Routines for Observation Preparation
 
 - `nirc2findtt`
 	- finds NIRC2 tip-tilt stars for a list of targets given RA & Dec 
@@ -22,7 +90,7 @@ An example with raw data, the reduced image, and the reduction script are provid
 - `nirc2_obs_manual.txt`
 	- some notes for observers
 
-## Reduction of Imaging Data 
+## Routines for Imaging Data Reduction
 
 - `nirc2dark`
 	- median combine dark fields

@@ -48,6 +48,7 @@ astrim,asinh_scale(img,img,max=10),tit=sxpar(h,'object')
 
 ; overlay catalog
 adxy,h,tmp.ra_icrs,tmp.de_icrs,x,y
+plotsym,0
 plots,x,y,psym=8,syms=2,noclip=0,color=cgcolor('green')
 ; mark a source to align catalog to
 print,' Click on a source ... '
@@ -102,7 +103,8 @@ for i=0,n_elements(x)-1 do begin
 	phot,img,xcen[i],ycen[i],fwhm,5*fwhm,flux=flux
 	snr[i] = flux[0]/flux[1]
 endfor
-forprint,x,y,xcen,ycen,snr
+print,'# X, Y, XCEN, YCEN, S/N'
+forprint,x,y,xcen,ycen,snr,textout=1
 ; include only successful centroids and above certain S/N
 s = where(xcen gt 0 and ycen gt 0 and snr gt snrcut)
 plots,x[s],y[s],psym=8,syms=2,color=cgcolor('red')
@@ -114,11 +116,11 @@ dy = total( (ycen[s]-y[s]) * (snr[s]/total(snr[s])) )
 sxaddpar,h,'crpix1',xcen0+.5+dx
 sxaddpar,h,'crpix2',ycen0+.5+dy
 ; update fixast related keywords
-sxaddpar,h,'fixast_catalog',catalog,$
+sxaddpar,h,'catalog',catalog,$
 	' Catalog used for astrometry calibration'
-sxaddpar,h,'fixast_nstars',n_elements(s),$
+sxaddpar,h,'nstars',n_elements(s),$
 	' Number of sources used for astrometry calibration'
-sxaddpar,h,'fixast_method','Simple Shift',$
+sxaddpar,h,'method','Simple Shift',$
 	' Method used for astrometry calibration'
 
 ; pause a bit to examine the result

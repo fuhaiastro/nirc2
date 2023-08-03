@@ -11,7 +11,7 @@ PRO NIRC2REDUX,rawfiles,output=output,caldir=caldir,$
 ; EXPLANATION:
 ;
 ; CALLING SEQUENCE:
-;   nirc2red,'lock01_kp/n*.fits',output=,caldir=,fltfile='flat_Kp_W_10jun',$
+;   nirc2redux,'lock01_kp/n*.fits',output=,caldir=,fltfile='flat_Kp_W_10jun',$
 ;            bpmfile='badpix_12oct',drkfile='drk_16_4_2_10jun',$
 ;	          /initial,/recenter,/ngs,/exam,/undistort,/reset
 ;
@@ -146,7 +146,7 @@ endif else begin
 endelse
 ; load distortion solution
 if keyword_set(undistort) then begin
-	findpro,'nirc2red',/noprint,dirlist=dirlist ; find this procedure's directory
+	findpro,'nirc2redux',/noprint,dirlist=dirlist ; find this procedure's directory
 	xdistort = mrdfits(dirlist[0]+'nirc2_'+camera+'_X_distortion.fits',/silent)
 	ydistort = mrdfits(dirlist[0]+'nirc2_'+camera+'_Y_distortion.fits',/silent)
 	; generate pixel grids in observed frame
@@ -216,7 +216,7 @@ window,0,xsize=800,ysize=800
 ; select: holds whether or not to keep a frame
 if ~keyword_set(exam) and file_test(output+'/discard.txt') then $
 ; if not in /exam mode and discard.txt exist then read it in
-	readcol2,output+'/discard.txt',jk1,select,f='a,i' $
+	readcol,output+'/discard.txt',jk1,select,f='a,i' $
 else $ ; otherwise keep every frame at this point
 	select = intarr(n_elements(ins))+1
 for i=0,ct-1 do begin
@@ -225,7 +225,7 @@ for i=0,ct-1 do begin
 	if file_test(ins[i]+'.txt') then begin 
 		; if txt file exist then skip the clicks on the primary source
 		; still need to go through the discard process if in /exam mode
-		readcol2,ins[i]+'.txt',xc,yc
+		readcol,ins[i]+'.txt',xc,yc
 		plots,xc,yc,psym=6,syms=2
 		if keyword_set(recenter) then begin ; if recenter, update xc/yc
 			CNTRD,img2[*,*,i],xc,yc,xnew,ynew,1.5*fwhm,/silent
@@ -354,7 +354,7 @@ for kk=1,2 do begin
 	img4 = img1*0 ; img3 renormalized by its median
 	img5 = img1*0 ; img1 w/ median sky subtracted 
 	for i=0,ct-1 do begin
-		readcol2,ins[i]+'.txt',xc,yc,f='f,f'
+		readcol,ins[i]+'.txt',xc,yc,f='f,f'
 		if i eq 0 then begin ; 1st frame has coords for all marked sources
 			x0 = xc
 			y0 = yc
@@ -442,7 +442,7 @@ for kk=1,niter do begin
 	noi = sqrt(median(var6[*,*,ind],dim=3))/exptime/sqrt(exm/exptime) ; e-/s
 	snr = filter_image(reform(img/noi),smooth=5)	
 	; load object list
-	readcol2,ins[0]+'.txt',xc,yc,f='f,f' ; read original list
+	readcol,ins[0]+'.txt',xc,yc,f='f,f' ; read original list
 	xc += xoff[0]
 	yc += yoff[0]
 	; modify object list
@@ -524,7 +524,7 @@ for kk=1,niter do begin
 	img4 = img1*0 ; img3 renormalized by its median
 	bkg5 = img1*0 ; bspline subtracted img5
 	for i=0,ct-1 do begin
-		readcol2,ins[i]+'.txt',xc,yc,f='f,f'
+		readcol,ins[i]+'.txt',xc,yc,f='f,f'
 		if i eq 0 then begin
 			x0 = xc
 			y0 = yc
@@ -592,9 +592,8 @@ endfor
 ; save the final object mask in a PNG file, overlaid with S/N map and 
 loadct,0
 astrim,asinh_scale(img,img,maxv=10),tit=output+': Intensity + S/N Map + Object Mask'
-linecolor,blue,green,red,purple,yellow,orange,grey,lgrey,white,black
-contour,snr,color=red,levels=snr_cut*[1,4,16],/overplot
-contour,nmask,color=green,levels=1,/overplot
+contour,snr,color=cgcolor('red'),levels=snr_cut*[1,4,16],/overplot
+contour,nmask,color=cgcolor('green'),levels=1,/overplot
 save_screen,dir+'/mask.png'
 loadct,0
 
@@ -626,7 +625,7 @@ endif
 ; after applying camera distortion, now we need to update offsets 
 if keyword_set(recenter) then begin
 	for i=0,ct-1 do begin
-		readcol2,ins[i]+'.txt',a,b,f='f,f'	
+		readcol,ins[i]+'.txt',a,b,f='f,f'	
 		CNTRD,img5[*,*,i],a[0],b[0],x,y,1.5*fwhm,/silent
 		if i eq 0 then begin
 			if sqrt((x-a[0])^2+(y-b[0])^2) gt 2*fwhm then begin ; drifted too far
