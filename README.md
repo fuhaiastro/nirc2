@@ -1,4 +1,4 @@
-## An IDL package to prepare and reduce Keck NIRC2 observations
+## nirc2: an IDL package to reduce and coadd Keck NIRC2 images
 *written by H.Fu around 2012* 
 
 ## References
@@ -29,10 +29,11 @@ set and generates a new output FITS file.
 cd ~/idl
 git clone https://github.com/fuhaiastro/nirc2.git
 ```
-2. Set environmental variables and define start-up command to launch `spfit`.
+2. Assume you use `bash, set environmental variables and define start-up command to launch `nirc2`.
 ```shell
 vi ~/.bash_profile
-alias nirc2='source ~/idl/nirc2/setup.sh; /Applications/harris/idl/bin/idl -IDL_PROMPT "SPFIT>"'
+# add the following line in .bash_profile
+alias nirc2='source ~/idl/nirc2/setup.sh; /Applications/harris/idl/bin/idl -IDL_PROMPT "NIRC2>"'
 ```
 3. Make sure the appropriate paths are set correctly for your host.
 ```shell
@@ -52,9 +53,6 @@ export IDL=$HOME/idl
 # NIRC2_IDL - NIRC2 data reduction & analysis
 export NIRC2_DIR=$IDL/pipelines/nirc2
 export IDL_PATH=${IDL_PATH}:+$NIRC2_DIR/pro
-
-# If preferred, use latest Astro, Coyote, MPFIT packages
-#export IDL_PATH=${IDL_PATH}:+$IDL/astron/pro:+$IDL/coyote:+$IDL/mpfit
 
 # IDLUTILS (which includes Astrolib, Coyote, & MPFIT)
 export IDLUTILS_DIR=$IDL/idlutils
@@ -90,7 +88,7 @@ $IDLUTILS_DIR/bin/evilmake
 - `nirc2_obs_manual.txt`
 	- some notes for observers
 
-## Routines for Imaging Data Reduction
+## Routines for Near-IR Imaging Data Reduction
 
 - `nirc2dark`
 	- median combine dark fields
@@ -111,5 +109,3 @@ $IDLUTILS_DIR/bin/evilmake
 - `nirc2ast`
 	- Calibrate the astrometry of reduced NIRC2 images against SDSS
 	  or DSS catalogs.
-
-
